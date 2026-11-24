@@ -149,6 +149,12 @@
                             <input type="hidden" name="latitude" id="latIn">
                             <input type="hidden" name="longitude" id="lngIn">
                             <input type="hidden" name="photo" id="photoInputIn">
+
+                            <div id="photoNoticeIn" class="hidden mb-3 text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg p-2.5 flex items-center gap-2">
+                                <svg class="size-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                <span>Foto wajah berhasil diambil! Klik tombol <strong>Kirim Absen Masuk</strong> di bawah ini untuk menyelesaikan absensi.</span>
+                            </div>
+
                             <button type="submit" id="btnSubmitIn" disabled class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-bold rounded-lg shadow transition flex items-center justify-center gap-2">
                                 <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
                                 Kirim Absen Masuk
@@ -390,6 +396,9 @@
         </div>
     </div>
 
+    <!-- SweetAlert2 CDN Fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         let currentStream = null;
         let userLat = null;
@@ -420,7 +429,10 @@
                         const distance = calculateDistance(userLat, userLng, officeLat, officeLng);
                         const badge = document.getElementById('locationStatusBadge');
 
-                        if (distance <= officeRadius) {
+                        if (officeRadius === 0) {
+                            badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                            badge.innerHTML = `<span class="size-2 rounded-full bg-emerald-500"></span> Mode Testing / Bebas Radius (${distance}m dari pusat kantor)`;
+                        } else if (distance <= officeRadius) {
                             badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200";
                             badge.innerHTML = `<span class="size-2 rounded-full bg-emerald-500"></span> Dalam Area Kantor (${distance}m dari pusat kantor)`;
                         } else {
@@ -529,6 +541,8 @@
                         const submitBtn = document.getElementById(submitBtnId);
                         if (submitBtn) submitBtn.disabled = false;
                     }
+                    const noticeIn = document.getElementById('photoNoticeIn');
+                    if (noticeIn && hiddenInputId === 'photoInputIn') noticeIn.classList.remove('hidden');
 
                     // Hentikan stream kamera jika sedang berjalan
                     if (currentStream) {
@@ -550,7 +564,15 @@
             const guide = document.getElementById(guideId);
 
             if (!video.srcObject) {
-                alert("Silakan nyalakan live stream kamera terlebih dahulu atau gunakan tombol 'Buka Kamera HP / Perangkat'!");
+                if (window.Swal) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Kamera Belum Aktif',
+                        text: "Silakan nyalakan live stream kamera terlebih dahulu atau gunakan tombol 'Buka Kamera HP / Perangkat'!"
+                    });
+                } else {
+                    alert("Silakan nyalakan live stream kamera terlebih dahulu atau gunakan tombol 'Buka Kamera HP / Perangkat'!");
+                }
                 return;
             }
 
@@ -570,6 +592,8 @@
                 const btnSubmit = document.getElementById(submitBtnId);
                 if (btnSubmit) btnSubmit.disabled = false;
             }
+            const noticeIn = document.getElementById('photoNoticeIn');
+            if (noticeIn && inputId === 'photoInputIn') noticeIn.classList.remove('hidden');
         }
 
         // Haversine distance in meters
@@ -646,24 +670,238 @@
             }
         });
 
-        // CheckOut Form Validation before submit
-        const formCheckOut = document.getElementById('formCheckOut');
-        if (formCheckOut) {
-            formCheckOut.addEventListener('submit', function(e) {
-                const photoInput = document.getElementById('photoInputOut').value;
-                const obstacleInput = document.getElementById('monev_obstacle').value.trim();
+        // CheckIn Form Submission via AJAX with SweetAlert2
+        const formCheckIn = document.getElementById('formCheckIn');
+        if (formCheckIn) {
+            formCheckIn.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const photoInput = document.getElementById('photoInputIn').value;
+                const lat = document.getElementById('latIn').value;
+                const lng = document.getElementById('lngIn').value;
 
                 if (!photoInput) {
-                    e.preventDefault();
-                    alert("Foto wajah pulang wajib diambil terlebih dahulu menggunakan kamera!");
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Foto Belum Diambil',
+                            text: 'Silakan ambil foto wajah Anda menggunakan kamera atau unggah foto terlebih dahulu!'
+                        });
+                    } else {
+                        alert('Silakan ambil foto wajah terlebih dahulu!');
+                    }
+                    return false;
+                }
+
+                if (!lat || !lng) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Lokasi GPS Belum Terdeteksi',
+                            text: "Browser belum mendeteksi titik GPS Anda. Pastikan Anda mengklik 'Izinkan / Allow' pada notifikasi izin lokasi di browser."
+                        });
+                    } else {
+                        alert("Lokasi GPS belum terdeteksi. Izinkan akses lokasi pada browser Anda.");
+                    }
+                    return false;
+                }
+
+                const submitBtn = document.getElementById('btnSubmitIn');
+                const origText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 text-white inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Memverifikasi & Menyimpan Absen...
+                `;
+
+                try {
+                    const formData = new FormData(formCheckIn);
+                    const res = await fetch("{{ route('attendance.checkin') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        if (window.Swal) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Absen Masuk Berhasil!',
+                                text: data.message,
+                                confirmButtonColor: '#059669'
+                            });
+                        } else {
+                            alert(data.message);
+                        }
+                        window.location.reload();
+                    } else {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origText;
+                        const errMsg = data.message || (data.errors ? Object.values(data.errors).flat().join('\n') : 'Terjadi kesalahan saat memproses absensi.');
+                        if (window.Swal) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Absen Masuk Ditolak',
+                                html: `<div class="text-left text-sm"><p class="font-medium text-gray-800 mb-2">${errMsg}</p><p class="text-xs text-gray-500 bg-gray-100 p-2.5 rounded mt-2">💡 <b>Info Pengujian:</b> Jika berada di luar radius kantor default (Jakarta), Anda dapat menyetel radius menjadi <b>0 (Mode Bebas Testing)</b> atau menyesuaikan titik koordinat di menu Pengaturan Lokasi Kantor.</p></div>`,
+                                confirmButtonColor: '#dc2626'
+                            });
+                        } else {
+                            alert('Absen Ditolak: ' + errMsg);
+                        }
+                    }
+                } catch(err) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = origText;
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Koneksi Terputus',
+                            text: 'Gagal mengirim data ke server lokal. Pastikan server masih berjalan.'
+                        });
+                    } else {
+                        alert('Terjadi kesalahan koneksi.');
+                    }
+                }
+            });
+        }
+
+        // CheckOut Form Submission via AJAX with SweetAlert2
+        const formCheckOut = document.getElementById('formCheckOut');
+        if (formCheckOut) {
+            formCheckOut.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const photoInput = document.getElementById('photoInputOut').value;
+                const obstacleInput = document.getElementById('monev_obstacle').value.trim();
+                const activityInput = document.getElementById('monev_activity').value.trim();
+                const lat = document.getElementById('latOut').value;
+                const lng = document.getElementById('lngOut').value;
+
+                if (!photoInput) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Foto Wajah Pulang Wajib',
+                            text: 'Foto wajah saat pulang wajib diambil terlebih dahulu menggunakan kamera!'
+                        });
+                    } else {
+                        alert("Foto wajah pulang wajib diambil terlebih dahulu menggunakan kamera!");
+                    }
+                    return false;
+                }
+
+                if (!activityInput) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Uraian Aktivitas Wajib Diisi',
+                            text: 'Silakan isi uraian tugas / aktivitas pekerjaan harian yang telah diselesaikan.'
+                        });
+                    } else {
+                        alert('Uraian aktivitas pekerjaan harian wajib diisi!');
+                    }
+                    document.getElementById('monev_activity').focus();
                     return false;
                 }
 
                 if (obstacleInput.length < 100) {
-                    e.preventDefault();
-                    alert("Kendala yang dilaporkan masih kurang dari 100 karakter (saat ini: " + obstacleInput.length + " karakter). Mohon uraikan kendala minimal 100 karakter sesuai ketentuan!");
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Kendala Kurang dari 100 Karakter',
+                            text: "Uraian kendala baru " + obstacleInput.length + " karakter. Ketentuan Non-ASN mewajibkan uraian kendala minimal 100 karakter sebagai bahan evaluasi pimpinan!"
+                        });
+                    } else {
+                        alert("Kendala yang dilaporkan masih kurang dari 100 karakter (saat ini: " + obstacleInput.length + " karakter). Minimal 100 karakter!");
+                    }
                     document.getElementById('monev_obstacle').focus();
                     return false;
+                }
+
+                if (!lat || !lng) {
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Lokasi GPS Belum Terdeteksi',
+                            text: 'Mohon izinkan akses lokasi (GPS) pada browser Anda agar absen pulang dapat diverifikasi.'
+                        });
+                    } else {
+                        alert('Lokasi GPS belum terdeteksi.');
+                    }
+                    return false;
+                }
+
+                const submitBtn = document.getElementById('btnSubmitOut');
+                const origText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 text-white inline mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Menyimpan Monev & Absen Pulang...
+                `;
+
+                try {
+                    const formData = new FormData(formCheckOut);
+                    const res = await fetch("{{ route('attendance.checkout') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok && data.success) {
+                        if (window.Swal) {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'Absen Pulang Berhasil!',
+                                text: data.message,
+                                confirmButtonColor: '#4f46e5'
+                            });
+                        } else {
+                            alert(data.message);
+                        }
+                        window.location.reload();
+                    } else {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origText;
+                        const errMsg = data.message || (data.errors ? Object.values(data.errors).flat().join('\n') : 'Terjadi kesalahan saat memproses absensi pulang.');
+                        if (window.Swal) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Absen Pulang Ditolak',
+                                text: errMsg,
+                                confirmButtonColor: '#dc2626'
+                            });
+                        } else {
+                            alert('Gagal: ' + errMsg);
+                        }
+                    }
+                } catch(err) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = origText;
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Koneksi Terputus',
+                            text: 'Gagal mengirim data ke server. Pastikan server masih berjalan.'
+                        });
+                    } else {
+                        alert('Terjadi kesalahan koneksi.');
+                    }
                 }
             });
         }

@@ -1,66 +1,160 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+
+# 🏛️ Absensi & Monev Non-ASN
+### Kantor Wilayah Kementerian Hukum dan HAM Kepulauan Bangka Belitung
+
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2%20|%208.3-777BB4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  Sistem presensi digital berbasis <b>Geofencing GPS</b> dan <b>Biometrik Wajah</b> terintegrasi modul <b>Monitoring & Evaluasi (Monev)</b> aktivitas harian serta perizinan pegawai Non-ASN.
 </p>
 
-## About Laravel
+</div>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🌟 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* **📍 Geofencing & Face Capture Presisi**  
+  Perekaman kehadiran masuk dan pulang wajib menyertakan foto wajah langsung (*live camera* / *capture perangkat*) yang divalidasi dengan radius GPS kantor menggunakan kalkulasi formula Haversine. Dilengkapi *testing mode* (`radius = 0`) untuk fleksibilitas pengujian lokal.
 
-## Learning Laravel
+* **📋 Monev Harian Terintegrasi**  
+  Syarat wajib sebelum absen pulang: pegawai mengisi uraian aktivitas, analisis kendala lapangan (minimal 100 karakter), dan unggah bukti foto kegiatan (maksimal 3 foto).
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* **📝 Pengajuan Cuti & Izin Digital**  
+  Pengajuan 9 kategori izin/cuti (sakit, cuti tahunan, dinas luar, dll.) dilengkapi upload berkas pendukung dan alur persetujuan (*approval / rejection*) oleh atasan secara real-time.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* **📊 Dashboard Monitoring & Pelaporan**  
+  Pemantauan status kehadiran harian (Tepat Waktu, Terlambat, Izin, Alpha) secara instan, lengkap dengan rekapitulasi presensi bulanan dan fitur cetak laporan siap pakai (*print / PDF export*).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* **🗂️ Manajemen Tugas & Proyek**  
+  Papan alur tugas (*Kanban task workflow*), pencatatan estimasi durasi kerja (*time tracking*), dan pemantauan progres penyelesaian proyek.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🛠️ Tech Stack
 
-### Premium Partners
+| Komponen | Teknologi |
+| :--- | :--- |
+| **Backend** | [Laravel 11](https://laravel.com), PHP 8.2 / 8.3 |
+| **Frontend** | [Tailwind CSS](https://tailwindcss.com), Blade Engine, [SweetAlert2](https://sweetalert2.github.io) |
+| **Tooling** | [Vite 5](https://vitejs.dev), Composer, NPM |
+| **Database** | MySQL 8.0+ / MariaDB |
+| **APIs** | HTML5 Geolocation API, WebRTC MediaStream API |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 🚀 Quick Start (Panduan Cepat)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prasyarat
+* PHP `>= 8.2` (ekstensi: `pdo_mysql`, `curl`, `fileinfo`, `gd`, `intl`, `mbstring`, `zip`, `openssl`)
+* Composer `>= 2.x`
+* Node.js `>= 18.x` & NPM
+* MySQL / MariaDB (misal: Laragon / XAMPP)
 
-## Code of Conduct
+### Instalasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# 1. Clone repository
+git clone https://github.com/kenyongid/Absensi-Monev_KemenkumBabel.git
+cd Absensi-Monev_KemenkumBabel
 
-## Security Vulnerabilities
+# 2. Setup environment
+cp .env.example .env
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 3. Install dependencies PHP & Node
+composer install
+npm install && npm run build
 
-## License
+# 4. Generate application key
+php artisan key:generate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 5. Database migration & initial data seeding
+php artisan migrate:fresh --seed
+php artisan storage:link
+
+# 6. Jalankan server lokal
+php artisan serve
+```
+
+> **Pengguna Windows (Laragon):** Anda juga dapat langsung menjalankan server cukup dengan klik dua kali file **`run.bat`**.
+
+Buka browser di **`http://127.0.0.1:8000`**.
+
+---
+
+## 🔑 Akun Login Bawaan (Hasil Seeder)
+
+| Role | Email | Password | Hak Akses |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@example.com` | `admin` | Dashboard, Rekapitulasi, Approval Cuti, Pengaturan Kantor, Manajemen SDM |
+| **Satpam (Non-ASN)** | `joko.satpam@nonasn.id` | `password123` | Presensi Masuk & Pulang, Monev Harian, Pengajuan Izin/Cuti |
+| **Driver (Non-ASN)** | `agus.driver@nonasn.id` | `password123` | Presensi Masuk & Pulang, Monev Harian, Pengajuan Izin/Cuti |
+| **Kebersihan (Non-ASN)**| `siti.kebersihan@nonasn.id` | `password123` | Presensi Masuk & Pulang, Monev Harian, Pengajuan Izin/Cuti |
+
+---
+
+## ⚙️ Pengaturan Geofencing & Lokasi Kantor
+
+1. Login sebagai **Admin** (`admin@example.com`).
+2. Masuk ke menu **Pengaturan Lokasi Kantor** (`/attendance/settings`).
+3. Anda dapat:
+   * Menyesuaikan koordinat GPS kantor dengan menekan tombol **"Ambil Titik Koordinat GPS Saat Ini"**.
+   * Menentukan radius toleransi (meter).
+   * Menyetel `radius = 0` jika ingin mengaktifkan **Mode Bebas / Testing** tanpa batasan jarak geofence.
+
+---
+
+## 📂 Struktur Direktori Utama
+
+```text
+├── app/
+│   ├── Http/Controllers/     # Controller logika absensi, monev, cuti, proyek & task
+│   └── Models/                  # Model Eloquent database (Attendance, OfficeSetting, dll.)
+├── database/
+│   ├── migrations/              # Skema tabel database
+│   └── seeders/                 # Data dummy & inisialisasi sistem
+├── resources/
+│   ├── views/                   # Template tampilan Blade (attendance, administration, dashboard)
+│   ├── css/ & js/               # Kode sumber Tailwind & JavaScript
+├── routes/
+│   └── web.php                  # Rute aplikasi
+└── run.bat                      # Runner instan untuk Windows / Laragon
+```
+
+---
+
+## 💡 Troubleshooting Ringkas
+
+<details>
+<summary><b>1. Mengapa Absen Masuk tertolak karena radius kantor?</b></summary>
+Pastikan radius kantor diatur ke <code>0</code> (Testing Mode) di <code>/attendance/settings</code> atau perbarui titik kantor sesuai lokasi perangkat Anda saat ini.
+</details>
+
+<details>
+<summary><b>2. Izin kamera atau lokasi tidak muncul di browser?</b></summary>
+Pastikan Anda mengakses via <code>http://localhost:8000</code> atau <code>http://127.0.0.1:8000</code>. Browser mengizinkan akses kamera dan lokasi hanya pada domain aman (HTTPS atau localhost). Klik ikon gembok pada address bar untuk memastikan izin <b>Camera</b> dan <b>Location</b> berstatus <i>Allow</i>.
+</details>
+
+<details>
+<summary><b>3. Foto presensi atau profil tidak tampil?</b></summary>
+Jalankan perintah symlink penyimpanan publik:
+<code>php artisan storage:link</code>
+</details>
+
+<details>
+<summary><b>4. Error <code>Please provide a valid cache path</code>?</b></summary>
+Pastikan direktori cache framework Laravel telah tersedia:
+<code>mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions bootstrap/cache</code>
+</details>
+
+---
+
+## 📄 Lisensi
+
+Proyek ini berada di bawah lisensi [MIT](LICENSE). Dikembangkan untuk keperluan operasional dan monitoring evaluasi pegawai di lingkungan Kementerian Hukum dan Hak Asasi Manusia Republik Indonesia.

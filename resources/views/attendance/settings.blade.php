@@ -47,9 +47,9 @@
 
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Radius Toleransi Lokasi (Meter) <span class="text-red-500">*</span></label>
-                    <input type="number" name="radius_meters" value="{{ old('radius_meters', $office->radius_meters) }}" required min="20" max="5000"
+                    <input type="number" name="radius_meters" value="{{ old('radius_meters', $office->radius_meters) }}" required min="0" max="50000000"
                         class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <p class="text-xs text-gray-400 mt-1">Pegawai Non-ASN hanya dapat absen jika berada dalam jarak radius ini dari titik kantor (disarankan 100 - 300 meter).</p>
+                    <p class="text-xs text-gray-500 mt-1">Pegawai Non-ASN hanya dapat absen jika berada dalam jarak radius ini dari titik kantor. <span class="text-indigo-600 font-semibold">(Isi 0 untuk Mode Bebas / Testing tanpa batasan radius).</span></p>
                     @error('radius_meters') <span class="text-xs text-red-600">{{ $message }}</span> @enderror
                 </div>
 

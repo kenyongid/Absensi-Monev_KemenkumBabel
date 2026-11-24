@@ -83,8 +83,8 @@ class AttendanceController extends Controller
             (float) $office->longitude
         );
 
-        // Validasi radius kantor
-        if ($distance > $office->radius_meters) {
+        // Validasi radius kantor (diabaikan jika radius_meters = 0 untuk mode testing/fleksibel)
+        if ($office->radius_meters > 0 && $distance > $office->radius_meters) {
             $msg = "Absen Ditolak! Anda berada di luar radius kantor ({$distance} meter dari kantor). Batas toleransi maksimal adalah {$office->radius_meters} meter. Absensi hanya diterima di lokasi kantor.";
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $msg], 422);
@@ -186,7 +186,8 @@ class AttendanceController extends Controller
             (float) $office->longitude
         );
 
-        if ($distance > $office->radius_meters) {
+        // Cek Geofencing lokasi kantor saat pulang (diabaikan jika radius_meters = 0 untuk mode testing/fleksibel)
+        if ($office->radius_meters > 0 && $distance > $office->radius_meters) {
             $msg = "Absen Pulang Ditolak! Anda berada di luar radius kantor ({$distance} meter dari kantor). Absen pulang dan monev hanya diterima di lokasi kantor.";
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $msg], 422);
@@ -369,7 +370,7 @@ class AttendanceController extends Controller
             'office_name' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'radius_meters' => 'required|integer|min:20|max:5000',
+            'radius_meters' => 'required|integer|min:0|max:50000000',
             'check_in_start' => 'required',
             'check_in_end' => 'required',
             'check_out_start' => 'required',
